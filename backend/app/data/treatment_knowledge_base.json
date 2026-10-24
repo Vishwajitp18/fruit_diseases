@@ -1,0 +1,512 @@
+{
+  "mango": {
+    "Anthracnose": {
+      "display_name": "Mango Anthracnose (Colletotrichum gloeosporioides)",
+      "symptoms_to_check": [
+        "Dark brown to black circular to angular sunken lesions on leaves.",
+        "Shot-hole effect where brittle dead lesion centers dry out and drop.",
+        "Blossom blight and black necrotic spots on young panicles."
+      ],
+      "immediate_actions": [
+        "Prune and safely burn infected twigs and mummified panicles.",
+        "Rake and remove fallen infected leaves from beneath the tree canopy to reduce spore reservoir.",
+        "Avoid overhead irrigation during new leaf flush and flowering."
+      ],
+      "preventive_measures": [
+        "Maintain open tree canopy architecture via annual pruning for rapid leaf drying.",
+        "Avoid high-nitrogen fertilizer applications during flushes which produce overly succulent susceptible foliage.",
+        "Ensure proper orchard drainage to lower microclimate humidity."
+      ],
+      "treatment_options": [
+        "Preventive copper oxychloride (3 g/L) spray at the onset of new vegetative flush.",
+        "Systemic foliar spray such as Azoxystrobin (1 ml/L) or Carbendazim (1 g/L) if disease pressure is high.",
+        "Repeat treatments at 14-day intervals during warm humid conditions adhering strictly to label rates."
+      ],
+      "when_to_seek_expert_help": "Consult local agricultural extension if black necrotic lesions spread rapidly to flower panicles and young fruit sets.",
+      "sources": [
+        { "title": "Mango Diseases and Their Management", "organization": "ICAR - Central Institute for Subtropical Horticulture", "url": "https://cish.icar.gov.in" },
+        { "title": "Anthracnose on Mango in Florida", "organization": "University of Florida IFAS Extension", "url": "https://edis.ifas.ufl.edu" }
+      ],
+      "reviewed_by": "Agricultural Extension Horticultural Pathology",
+      "last_reviewed": "2026-10"
+    },
+    "Bacterial Canker": {
+      "display_name": "Mango Bacterial Canker (Xanthomonas citri pv. mangiferaeindicae)",
+      "symptoms_to_check": [
+        "Water-soaked angular lesions bounded by leaf veins that turn raised, black, and cankerous.",
+        "Prominent chlorotic yellow halos encircling the dark lesions.",
+        "Longitudinal cracks on twigs and gummy bacterial exudate oozing from lesions."
+      ],
+      "immediate_actions": [
+        "Prune out infected twigs 10 cm below lesion margin using shears sterilized in 70% alcohol or 10% bleach.",
+        "Collect and incinerate all diseased prunings and fallen diseased leaves.",
+        "Avoid working in the orchard when canopy is wet to prevent mechanical transmission."
+      ],
+      "preventive_measures": [
+        "Establish protective windbreaks around the orchard perimeter to minimize wind-driven leaf abrasion.",
+        "Inspect nursery graft material rigorously before field planting.",
+        "Disinfect harvesting and pruning equipment between trees."
+      ],
+      "treatment_options": [
+        "Bactericidal spray of Copper Oxychloride (2.5 g/L) mixed with Streptomycin Sulfate (100 ppm / 0.1 g/L).",
+        "Apply at bud emergence and repeat every 15-20 days during rainy monsoon periods.",
+        "Rotate bactericidal modes of action to manage resistance."
+      ],
+      "when_to_seek_expert_help": "Seek professional diagnosis if cankers show extensive bacterial gumming on major scaffolds or young fruit sets.",
+      "sources": [
+        { "title": "Bacterial Black Spot of Mango", "organization": "CABI Compendium", "url": "https://www.cabidigitallibrary.org" },
+        { "title": "Mango Canker Management", "organization": "ICAR - Indian Institute of Horticultural Research", "url": "https://www.iihr.res.in" }
+      ],
+      "reviewed_by": "Bacterial Plant Pathology Advisory Board",
+      "last_reviewed": "2026-10"
+    },
+    "Cutting Weevil": {
+      "display_name": "Mango Leaf Cutting Weevil (Deporaus marginatus)",
+      "symptoms_to_check": [
+        "Clean, scissor-like transverse incisions across tender young leaves.",
+        "Severed apical halves of leaves hanging limp or littering the ground under the canopy.",
+        "Tiny adult weevils (reddish-brown with long snouts) visible on fresh flush."
+      ],
+      "immediate_actions": [
+        "Collect and destroy severed leaf tips containing oviposited eggs lying on the ground.",
+        "Gently shake affected young branches over a white cloth in early morning to dislodge and capture adults.",
+        "Apply sticky tree trunk barrier bands to impede crawling insects."
+      ],
+      "preventive_measures": [
+        "Shallow basin hoeing and raking under the tree dripline to expose pupae to sun and avian predators.",
+        "Synchronize tree flushes with balanced nutrition to shorten vulnerable tender-flush windows."
+      ],
+      "treatment_options": [
+        "Foliar application of Neem Seed Kernel Extract (NSKE 5%) or Azadirachtin (10,000 ppm at 2 ml/L) on new flush.",
+        "If infestation exceeds 10% severed foliage, apply contact bio-rational insecticide such as Deltamethrin (0.5 ml/L) per local label."
+      ],
+      "when_to_seek_expert_help": "Call extension officers if more than 30% of the terminal vegetative flush in young non-bearing trees is severed.",
+      "sources": [
+        { "title": "Insect Pests of Mango and Their Control", "organization": "Directorate of Plant Protection, Quarantine & Storage", "url": "https://ppqs.gov.in" }
+      ],
+      "reviewed_by": "Agricultural Entomology Extension",
+      "last_reviewed": "2026-10"
+    },
+    "Die Back": {
+      "display_name": "Mango Die Back (Lasiodiplodia theobromae)",
+      "symptoms_to_check": [
+        "Leaves on terminal shoots turn brown, roll inward, and desiccate without falling.",
+        "Discoloration and die-back progressing downward from the twig tip toward larger branches.",
+        "Vascular cambium under the bark turns brown to purplish-black when scraped."
+      ],
+      "immediate_actions": [
+        "Prune dying twigs 8-10 cm below the lowest visible margin of discoloration into sound green wood.",
+        "Immediately seal all cut wound surfaces with Bordeaux paste or Copper Oxychloride slurry.",
+        "Burn or bury all pruned infected wood outside the grove perimeter."
+      ],
+      "preventive_measures": [
+        "Control stem borers and wood-boring insects whose exit wounds serve as entry points for the fungal pathogen.",
+        "Avoid water stress and heavy salinity spikes during dry post-monsoon and summer periods.",
+        "Ensure zinc and micronutrient balance to strengthen woody tissue defenses."
+      ],
+      "treatment_options": [
+        "Foliar spray of Thiophanate-Methyl (1 g/L) or Carbendazim (1 g/L) following pruning operations.",
+        "Drench soil root zone with Copper Oxychloride (3 g/L) in severely affected orchards."
+      ],
+      "when_to_seek_expert_help": "Contact an agronomist if die-back spreads into primary scaffold limbs or main tree trunk.",
+      "sources": [
+        { "title": "Management of Mango Dieback and Decline", "organization": "FAO Horticulture Technical Papers", "url": "https://www.fao.org" }
+      ],
+      "reviewed_by": "Orchard Health & Pathology Division",
+      "last_reviewed": "2026-10"
+    },
+    "Gall Midge": {
+      "display_name": "Mango Leaf Gall Midge (Procontarinia spp.)",
+      "symptoms_to_check": [
+        "Numerous small, wart-like conical or blister-like galls protruding on leaf blade surfaces.",
+        "Galled leaves curl, become crinkled, and exhibit premature chlorosis and drop.",
+        "Small exit holes on older galls indicating adult midge emergence."
+      ],
+      "immediate_actions": [
+        "Prune and destroy heavily galled tender shoots before adult midges emerge.",
+        "Deep hoeing and soil solarization of the drip circle to destroy pupating cocoons in topsoil.",
+        "Maintain clean basin weed-free conditions."
+      ],
+      "preventive_measures": [
+        "Conserve predatory wasps (Platygaster spp.) by avoiding non-target broad-spectrum calendar sprays.",
+        "Monitor emergence with yellow sticky cards suspended within the inner lower canopy."
+      ],
+      "treatment_options": [
+        "Foliar spray with biological Beauveria bassiana (2 g/L) or Neem oil (3 ml/L) during flush emergence.",
+        "In severe recurring infestations, spray systemic Thiamethoxam (0.25 g/L) or Dimethoate (1.5 ml/L) at bud break per label instructions."
+      ],
+      "when_to_seek_expert_help": "Seek specialist guidance if over 50% of the flushes in establishing trees (under 5 years) are stunted by galls.",
+      "sources": [
+        { "title": "Biology and Management of Mango Gall Midges", "organization": "Indian Council of Agricultural Research", "url": "https://icar.org.in" }
+      ],
+      "reviewed_by": "Fruit Crop Entomology Panel",
+      "last_reviewed": "2026-10"
+    },
+    "Healthy": {
+      "display_name": "Healthy Mango Foliage",
+      "symptoms_to_check": [
+        "Uniform rich green leaf blade free of chlorosis, necrosis, galls, and mildew coatings.",
+        "Normal flexible turgor and healthy venation pattern."
+      ],
+      "immediate_actions": [
+        "No chemical intervention required.",
+        "Record scan date in orchard management log."
+      ],
+      "preventive_measures": [
+        "Follow regular drip irrigation and balanced NPK + micronutrient (Zn, B, Fe) fertilization schedule.",
+        "Maintain bi-weekly scouting during critical flush, flowering, and fruit-development windows."
+      ],
+      "treatment_options": [
+        "None necessary. Maintain routine protective orchard hygiene."
+      ],
+      "when_to_seek_expert_help": "Normal healthy specimen; contact extension officer only if unexplained blossom drop occurs.",
+      "sources": [
+        { "title": "Good Agricultural Practices for Mango", "organization": "APEDA Horticultural Guide", "url": "https://apeda.gov.in" }
+      ],
+      "reviewed_by": "Good Agricultural Practices (GAP) Advisory",
+      "last_reviewed": "2026-10"
+    },
+    "Powdery Mildew": {
+      "display_name": "Mango Powdery Mildew (Oidium mangiferae)",
+      "symptoms_to_check": [
+        "White powdery superficial fungal patches on leaves, panicles, and young fruit stems.",
+        "Affected leaves curl inward, become distorted, and turn purplish-brown before defoliating.",
+        "Drying and complete premature drop of flower buds and newly set marble-sized fruit."
+      ],
+      "immediate_actions": [
+        "Inspect inflorescences and terminal vegetative flushes immediately for early white powdery spots.",
+        "Prune dense internal water sprouts to admit direct sunlight and air movement."
+      ],
+      "preventive_measures": [
+        "Avoid overhead sprinkler irrigation during cool nights and high morning humidity periods.",
+        "Schedule preventive organic sulfur applications before full flower bloom."
+      ],
+      "treatment_options": [
+        "Wettable Sulfur (2 g/L) spray at pre-bloom and post-bloom stages.",
+        "Systemic triazole fungicide such as Hexaconazole (1 ml/L) or Difenoconazole (0.5 ml/L) upon initial symptom detection.",
+        "Ensure thorough coverage of both upper and lower leaf surfaces."
+      ],
+      "when_to_seek_expert_help": "Consult extension immediately if powdery patches appear on panicles during peak flowering, as yield loss can exceed 80%.",
+      "sources": [
+        { "title": "Mango Powdery Mildew Epidemiology and Control", "organization": "University of Queensland Plant Pathology", "url": "https://uq.edu.au" }
+      ],
+      "reviewed_by": "Horticultural Mycological Unit",
+      "last_reviewed": "2026-10"
+    },
+    "Sooty Mould": {
+      "display_name": "Mango Sooty Mould (Meliola mangiferae / Capnodium mangiferae)",
+      "symptoms_to_check": [
+        "Superficial black velvety coating or crust on upper leaf surfaces, twigs, and fruit stalks.",
+        "Black film peels off in dry weather flakes or rubs off easily with water, revealing uninjured green leaf underneath.",
+        "Presence of honeydew-secreting insects (mango hoppers, mealybugs, scale insects, or aphids)."
+      ],
+      "immediate_actions": [
+        "Identify and treat the underlying sap-feeding insect infestation causing honeydew excretion.",
+        "Foliar wash with a 1-2% starch solution (boil 1 kg maida/flour in 5 L water, dilute to 100 L); as it dries, it flakes off the sooty film."
+      ],
+      "preventive_measures": [
+        "Prune overlapping internal branches to reduce the humid sheltered conditions preferred by sap feeders.",
+        "Encourage natural predators including ladybird beetles and lacewings."
+      ],
+      "treatment_options": [
+        "Target the primary insect vectors with Horticultural Spray Oil (1%) or Potassium soap (5 g/L).",
+        "If hopper population is high, apply Imidacloprid (0.3 ml/L) or Acetamiprid (0.2 g/L) per label guidance."
+      ],
+      "when_to_seek_expert_help": "Seek advice if entire tree canopy is darkened and hopper population remains uncontrolled after treatment.",
+      "sources": [
+        { "title": "Management of Mango Hoppers and Sooty Mould", "organization": "ICAR-CISH Technology Bulletin", "url": "https://cish.icar.gov.in" }
+      ],
+      "reviewed_by": "Subtropical Fruit Integrated Pest Management",
+      "last_reviewed": "2026-10"
+    }
+  },
+  "apple": {
+    "scab": {
+      "display_name": "Apple Scab (Venturia inaequalis)",
+      "symptoms_to_check": [
+        "Olive-green to velvety dark brown lesions on the upper leaf surface.",
+        "Leaves become crinkled, distorted, and pucker around lesion sites.",
+        "Severe infection leads to early chlorosis and premature defoliation."
+      ],
+      "immediate_actions": [
+        "Flail-mow or rake and compost fallen overwintering leaves with 5% urea spray to hasten decomposition.",
+        "Prune trees during dormancy to open canopy for rapid sun-drying of foliage."
+      ],
+      "preventive_measures": [
+        "Plant scab-resistant cultivars (e.g., Enterprise, Liberty, Prima) in high-pressure regions.",
+        "Monitor Mills infection periods using weather stations (hours of leaf wetness vs temperature)."
+      ],
+      "treatment_options": [
+        "Protectant sprays of Mancozeb (2.5 g/L) or Captan (2 g/L) before projected rain events.",
+        "Curative systemic fungicides such as Difenoconazole (0.3 ml/L) or Myclobutanil (0.4 g/L) within 72 hours of an infection period."
+      ],
+      "when_to_seek_expert_help": "Contact orchard specialist if secondary scab spreads across more than 20% of terminal spur leaves.",
+      "sources": [
+        { "title": "Apple Scab Management Guidelines", "organization": "Cornell University Cooperative Extension", "url": "https://fruit.cornell.edu" },
+        { "title": "Apple Disease Control in Orchards", "organization": "Washington State University Extension", "url": "https://treefruit.wsu.edu" }
+      ],
+      "reviewed_by": "Deciduous Fruit Pathology Service",
+      "last_reviewed": "2026-10"
+    },
+    "rust": {
+      "display_name": "Cedar Apple Rust (Gymnosporangium juniperi-virginianae)",
+      "symptoms_to_check": [
+        "Bright yellow-orange or reddish circular spots on the upper leaf surface with a dark orange center.",
+        "Cluster cups (aecia) with small cylindrical projections on the leaf underside in mid-summer.",
+        "Premature leaf drop in severe seasons causing fruit sunburn and reduced return bloom."
+      ],
+      "immediate_actions": [
+        "Inspect and remove gall-bearing Eastern red cedar and juniper plants within a 1-2 km radius if feasible.",
+        "Pick off and destroy localized infected leaves on small young trees."
+      ],
+      "preventive_measures": [
+        "Plant rust-immune or resistant apple cultivars.",
+        "Scout nearby ornamental junipers in spring for gelatinous orange horn-like galls during wet weather."
+      ],
+      "treatment_options": [
+        "Foliar fungicide applications of Myclobutanil or Mancozeb starting at pink bud through petal fall.",
+        "Ensure timely protection when cedar galls are actively sporulating during spring rains."
+      ],
+      "when_to_seek_expert_help": "Consult extension if defoliation exceeds 15% during early fruit sizing.",
+      "sources": [
+        { "title": "Cedar Apple Rust on Fruit and Ornamentals", "organization": "Penn State Extension", "url": "https://extension.psu.edu" }
+      ],
+      "reviewed_by": "Temperate Tree Fruit Extension",
+      "last_reviewed": "2026-10"
+    },
+    "multiple_diseases": {
+      "display_name": "Multiple Co-Occurring Apple Foliar Diseases",
+      "symptoms_to_check": [
+        "Simultaneous presence of scab lesions, rust pustules, and fungal leaf spots (black rot or Alternaria).",
+        "Widespread leaf yellowing, marginal necrosis, and premature defoliation."
+      ],
+      "immediate_actions": [
+        "Rake and safely remove all fallen orchard leaf litter immediately.",
+        "Prune dead, diseased, or cankered twigs back into healthy tissue."
+      ],
+      "preventive_measures": [
+        "Implement a structured broad-spectrum integrated disease management schedule.",
+        "Improve orchard drainage and lower humidity through annual training and pruning."
+      ],
+      "treatment_options": [
+        "Broad-spectrum tank mix containing a protectant (Captan 2 g/L) and a systemic triazole per regional spray guide.",
+        "Follow strict label directions and observe pre-harvest intervals."
+      ],
+      "when_to_seek_expert_help": "Engage an agronomist or extension plant pathologist for a formal laboratory diagnostic culture.",
+      "sources": [
+        { "title": "Integrated Fruit Pest Management Guide", "organization": "Michigan State University Extension", "url": "https://canr.msu.edu" }
+      ],
+      "reviewed_by": "Integrated Fruit Pest Management Board",
+      "last_reviewed": "2026-10"
+    },
+    "healthy": {
+      "display_name": "Healthy Apple Foliage",
+      "symptoms_to_check": [
+        "Uniform deep green leaf coloration with smooth serrated margins and no lesions or distortion."
+      ],
+      "immediate_actions": [
+        "No chemical intervention needed.",
+        "Record observation in orchard monitoring ledger."
+      ],
+      "preventive_measures": [
+        "Continue standard balanced fertilization and drip irrigation.",
+        "Perform routine weekly scouting for early scab or rust onset."
+      ],
+      "treatment_options": [
+        "None required. Maintain standard preventive orchard sanitation."
+      ],
+      "when_to_seek_expert_help": "Routine healthy foliage; consult extension if unusual wilting or fruit dropping is observed.",
+      "sources": [
+        { "title": "Apple Orchard Integrated Management", "organization": "UC Davis IPM Program", "url": "https://ipm.ucanr.edu" }
+      ],
+      "reviewed_by": "Tree Fruit Production Extension",
+      "last_reviewed": "2026-10"
+    }
+  },
+  "banana": {
+    "Banana Black Sigatoka Disease": {
+      "display_name": "Black Sigatoka (Pseudocercospora fijiensis)",
+      "symptoms_to_check": [
+        "Tiny dark reddish-brown to black rusty streaks parallel to leaf veins on the underside.",
+        "Streaks widen into oval sunken lesions with greyish centres and black borders.",
+        "Lesions coalesce causing large areas of leaf tissue to dry out and collapse prematurely."
+      ],
+      "immediate_actions": [
+        "Deleaf severely diseased leaves (more than 50% necrotic) with a sanitized knife and place leaf face-down on soil to reduce airborne ascospore release.",
+        "Improve drainage and spacing to lower canopy relative humidity."
+      ],
+      "preventive_measures": [
+        "Plant tissue-culture cultivars with known resistance to black Sigatoka where available.",
+        "Maintain optimal soil potassium levels to improve plant structural defense."
+      ],
+      "treatment_options": [
+        "Systemic foliar fungicides such as Azoxystrobin, Difenoconazole, or Propiconazole mixed with mineral oil (5 L/ha) in rotation.",
+        "Apply according to local early warning disease monitoring systems to prevent resistance buildup."
+      ],
+      "when_to_seek_expert_help": "Consult extension if functional green leaves at flowering drop below 8 per plant.",
+      "sources": [
+        { "title": "Management of Black Sigatoka in Banana", "organization": "Bioversity International & FAO", "url": "https://www.bioversityinternational.org" },
+        { "title": "Sigatoka Disease Management Guide", "organization": "Department of Agriculture and Fisheries Queensland", "url": "https://www.daf.qld.gov.au" }
+      ],
+      "reviewed_by": "Musa Pathology Working Group",
+      "last_reviewed": "2026-10"
+    },
+    "Banana Yellow Sigatoka Disease": {
+      "display_name": "Yellow Sigatoka (Pseudocercospora musae)",
+      "symptoms_to_check": [
+        "Pale yellow-green narrow specks and streaks (1-2 mm) parallel to leaf veins on upper leaf surface.",
+        "Specks enlarge into elliptical spots with light ash-grey sunken centres and bright yellow halos.",
+        "Extensive blighting of mature lower leaves."
+      ],
+      "immediate_actions": [
+        "Prune and remove severely affected leaf parts (surgical deleafing) to reduce inoculum.",
+        "Widen plant spacing to facilitate air movement and leaf drying."
+      ],
+      "preventive_measures": [
+        "Maintain clean field sanitation and suppress weeds in planting rows.",
+        "Ensure regular balanced N and K nutrition."
+      ],
+      "treatment_options": [
+        "Preventive foliar sprays of Mancozeb (2 g/L) or Chlorothalonil (2 g/L) with agricultural spray oil.",
+        "Systemic triazole fungicide during periods of high rainfall and warm temperatures."
+      ],
+      "when_to_seek_expert_help": "Consult agronomic experts if infection moves rapidly onto the youngest 3-4 leaves.",
+      "sources": [
+        { "title": "Banana Diseases and Pests", "organization": "CABI Compendium", "url": "https://www.cabidigitallibrary.org" }
+      ],
+      "reviewed_by": "Tropical Plant Pathology Council",
+      "last_reviewed": "2026-10"
+    },
+    "Banana Bract Mosaic Virus Disease": {
+      "display_name": "Banana Bract Mosaic Virus (BBrMV)",
+      "symptoms_to_check": [
+        "Dark reddish-brown to chlorotic spindle-shaped streaks or mosaic stripes on leaf petioles and midribs.",
+        "Pronounced mosaic and necrotic streaks on flower bracts.",
+        "Stunted growth, leaf puckering, and choked fruit bunch emergence."
+      ],
+      "immediate_actions": [
+        "Rogue and immediately eradicate infected mats (mother and suckers) using recommended systemic arboricides (e.g., glyphosate injection) to prevent sucker regrowth.",
+        "Do not harvest suckers or planting material from affected fields."
+      ],
+      "preventive_measures": [
+        "Use exclusively certified virus-indexed tissue-culture plantlets for new plantations.",
+        "Monitor and control aphid vectors (Pentalonia nigronervosa)."
+      ],
+      "treatment_options": [
+        "No chemical cure exists for viral plant infections.",
+        "Target aphid vector control with horticultural soap or systemic insecticide before rogueing infected mats."
+      ],
+      "when_to_seek_expert_help": "Report suspected BBrMV occurrences to state plant quarantine and extension services immediately.",
+      "sources": [
+        { "title": "Banana Bract Mosaic Virus Technical Card", "organization": "ProMusa Global Banana Knowledge Network", "url": "https://www.promusa.org" }
+      ],
+      "reviewed_by": "Musa Virological Surveillance Unit",
+      "last_reviewed": "2026-10"
+    },
+    "Banana Insect Pest Disease": {
+      "display_name": "Banana Insect Pest Damage (Weevils / Thrips / Caterpillars)",
+      "symptoms_to_check": [
+        "Irregular leaf margin notches, holes, or skeletonized foliage.",
+        "Silvery scarring, rusty watermarks, or black frass specks on leaf surfaces.",
+        "Weakened pseudostem or root tunneling by banana corm weevil larvae (Cosmopolites sordidus)."
+      ],
+      "immediate_actions": [
+        "Inspect pseudostem base and crown leaves to identify the specific feeding insect.",
+        "Install pseudostem disc or split-log traps at ground level to monitor and capture weevils.",
+        "Remove and chop dry hanging leaves where thrips shelter."
+      ],
+      "preventive_measures": [
+        "Use clean certified planting material free of weevil boreholes.",
+        "Dip planting suckers in hot water (54°C for 20 minutes) to eliminate weevil eggs and nematodes before planting."
+      ],
+      "treatment_options": [
+        "Apply entomopathogenic fungus Beauveria bassiana (10^8 spores/g) or Metarhizium anisopliae around pseudostem base.",
+        "Use targeted eco-friendly Neem oil (5 ml/L) or registered bio-rational insecticides per label."
+      ],
+      "when_to_seek_expert_help": "Seek extension help if pseudostem toppling occurs due to extensive subterranean weevil boring.",
+      "sources": [
+        { "title": "Banana Weevil Borer and Thrips Management", "organization": "FAO Inter-American Tropical Fruit Group", "url": "https://www.fao.org" }
+      ],
+      "reviewed_by": "Agricultural Entomology Musa Division",
+      "last_reviewed": "2026-10"
+    },
+    "Banana Moko Disease": {
+      "display_name": "Banana Moko Disease (Ralstonia solanacearum race 2)",
+      "symptoms_to_check": [
+        "Rapid yellowing, wilting, and collapse of the youngest central leaves.",
+        "Vascular bundles in pseudostem show prominent dark brown to black ring-like discoloration.",
+        "Rotting, blackened fruit with premature irregular ripening."
+      ],
+      "immediate_actions": [
+        "Quarantine infected mats immediately; fence off area to avoid human, animal, or tool traffic.",
+        "Sterilize all pruning and harvesting knives in 20% sodium hypochlorite or formalin solution between every single mat.",
+        "Remove male flower buds (debudding) using a forked wooden stick to prevent insect transmission."
+      ],
+      "preventive_measures": [
+        "Plant clean tissue-culture plants in fields with no history of bacterial wilt.",
+        "Establish buffer border zones and strict foot-bath biosecurity."
+      ],
+      "treatment_options": [
+        "No chemical cure exists for bacterial wilt in infected tissues.",
+        "Inject diseased mats with glyphosate, allow to dry in situ, and incinerate completely."
+      ],
+      "when_to_seek_expert_help": "Mandatory quarantine pathogen: immediately report suspected cases to the national plant protection organization.",
+      "sources": [
+        { "title": "Bacterial Wilt Diseases of Banana", "organization": "CABI Invasive Species Compendium", "url": "https://www.cabidigitallibrary.org" }
+      ],
+      "reviewed_by": "National Plant Biosecurity Committee",
+      "last_reviewed": "2026-10"
+    },
+    "Banana Panama Disease": {
+      "display_name": "Panama Disease / Fusarium Wilt (Fusarium oxysporum f. sp. cubense)",
+      "symptoms_to_check": [
+        "Progressive yellowing of oldest lower leaves starting from margins and moving toward midrib.",
+        "Petiole buckles at pseudostem junction, leaving a skirt of dead hanging leaves around the trunk.",
+        "Longitudinal splitting of the lower pseudostem base with red-to-dark-brown vascular strands inside."
+      ],
+      "immediate_actions": [
+        "Isolate infected mat and adjacent buffer plants immediately; do not move soil, water, or tools from the site.",
+        "Disinfect footwear and machinery with quaternary ammonium compounds before leaving the field.",
+        "Destroy infected mats on site using approved containment protocols."
+      ],
+      "preventive_measures": [
+        "Plant certified resistant varieties (such as GCTCV-218 or tolerant somaclones).",
+        "Maintain high soil microbial biodiversity through organic amendments and avoid flood irrigation runoff."
+      ],
+      "treatment_options": [
+        "Soil-borne fungal pathogen with chlamydospores that persist 30+ years; no fungicide can cure systemic infection.",
+        "Incorporate biological control agents (Trichoderma viride, Bacillus subtilis) into soil to suppress inoculum."
+      ],
+      "when_to_seek_expert_help": "Urgent: contact your agricultural department and university plant clinic immediately to confirm race type via molecular PCR.",
+      "sources": [
+        { "title": "Fusarium Wilt of Banana (Panama Disease)", "organization": "World Banana Forum, FAO", "url": "https://www.fao.org/world-banana-forum" }
+      ],
+      "reviewed_by": "Global Fusarium Wilt Task Force",
+      "last_reviewed": "2026-10"
+    },
+    "Banana Healthy Leaf": {
+      "display_name": "Healthy Banana Leaf",
+      "symptoms_to_check": [
+        "Expansive, vibrant emerald green leaf blade free of chlorotic streaks, spotting, and petiole collapse."
+      ],
+      "immediate_actions": [
+        "No chemical or corrective treatment needed.",
+        "Maintain routine field observation logs."
+      ],
+      "preventive_measures": [
+        "Ensure adequate potassium and nitrogen split applications to support continuous leaf emergence.",
+        "Maintain uniform soil moisture through efficient drip irrigation."
+      ],
+      "treatment_options": [
+        "None required. Maintain high plantation biosecurity and sanitary tool protocols."
+      ],
+      "when_to_seek_expert_help": "Healthy foliage; consult agronomist if bunch emergence or sizing problems arise.",
+      "sources": [
+        { "title": "Banana Crop Production Guidelines", "organization": "ICAR - National Research Centre for Banana", "url": "https://nrcb.icar.gov.in" }
+      ],
+      "reviewed_by": "Musa Horticultural Advisory",
+      "last_reviewed": "2026-10"
+    }
+  }
+}
+

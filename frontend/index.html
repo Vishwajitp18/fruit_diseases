@@ -1,0 +1,937 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LeafScan — Fruit Leaf Disease Screening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: full-bleed spore-field hero, then a two-column specimen bench (photo stage left, readout right), then log and field guide. */
+:root {
+  --ink: #0a1210;
+  --panel: #0f1a16;
+  --panel-2: #14231e;
+  --line: #24382f;
+  --text: #e8f0e6;
+  --mute: #8ba597;
+  --accent: #f4c430;
+  --ok: #62d48b;
+  --warn: #f4c430;
+  --bad: #ff7a59;
+  --display: "Bricolage Grotesque", "Arial Narrow", system-ui, sans-serif;
+  --body: "Hanken Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--ink); }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--text);
+  font: 400 16px/1.55 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.wrap { max-width: 1240px; margin: 0 auto; }
+.mono { font-family: var(--mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
+
+/* top bar */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 18px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -.02em; }
+.brand svg { width: 26px; height: 26px; color: var(--accent); }
+.top-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pill { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); padding: 7px 12px; border-radius: 99px; font: 500 12px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mute); background: var(--panel); }
+.pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); box-shadow: 0 0 10px var(--warn); }
+.pill.live i { background: var(--ok); box-shadow: 0 0 10px var(--ok); }
+.btn { border: 1px solid var(--line); background: var(--panel); padding: 10px 16px; border-radius: 2px; font-weight: 600; font-size: 14px; transition: border-color .15s, background .15s, transform .15s; }
+.btn:hover { border-color: var(--accent); }
+.btn:active { transform: translateY(1px); }
+.btn[disabled] { opacity: .4; cursor: not-allowed; border-color: var(--line); }
+.btn.primary { background: var(--accent); color: var(--ink); border-color: var(--accent); }
+.btn.primary[disabled] { background: var(--panel-2); color: var(--mute); }
+.btn.ghost { background: transparent; }
+
+/* hero */
+.hero { position: relative; max-width: 1240px; margin: 0 auto; padding-block: 56px 36px; overflow: hidden; isolation: isolate; }
+#field { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 24px 48px; align-items: end; }
+h1 { margin: 0; font: 800 clamp(64px, 15vw, 188px)/.82 var(--display); letter-spacing: -.05em; text-wrap: balance; }
+h1 span { display: block; }
+h1 .outline { color: transparent; -webkit-text-stroke: 2px var(--accent); transition: color .5s; }
+h1:hover .outline { color: var(--accent); }
+.hero p { margin: 0; color: var(--mute); max-width: 34ch; font-size: 17px; }
+.hero p b { color: var(--text); font-weight: 600; }
+
+.crops { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 40px; }
+.crop { text-align: left; padding: 16px 18px; border: 1px solid var(--line); background: color-mix(in srgb, var(--panel) 88%, transparent); border-radius: 2px; display: grid; gap: 4px; transition: background .2s, color .2s, border-color .2s, transform .2s; }
+.crop:hover { border-color: var(--c); transform: translateY(-2px); }
+.crop strong { font: 800 clamp(22px, 4vw, 34px)/1 var(--display); letter-spacing: -.03em; }
+.crop .mono { color: inherit; opacity: .7; }
+.crop[aria-selected="true"] { background: var(--c); color: var(--ink); border-color: var(--c); }
+
+/* bench */
+.bench { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 24px; padding-block: 24px 48px; align-items: start; }
+.frame { position: relative; aspect-ratio: 4 / 3; background: var(--panel); border: 1px solid var(--line); overflow: hidden; border-radius: 2px; }
+.frame canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.frame .mark { position: absolute; width: 22px; height: 22px; border: 2px solid var(--accent); pointer-events: none; z-index: 3; }
+.mark.tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
+.mark.tr { top: 10px; right: 10px; border-left: 0; border-bottom: 0; }
+.mark.bl { bottom: 10px; left: 10px; border-right: 0; border-top: 0; }
+.mark.br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
+.tag { position: absolute; left: 40px; top: 12px; z-index: 3; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; background: color-mix(in srgb, var(--ink) 78%, transparent); padding: 6px 8px; border: 1px solid var(--line); max-width: calc(100% - 80px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.drop { position: absolute; inset: 14px; z-index: 2; display: grid; place-content: center; text-align: center; gap: 8px; border: 1px dashed var(--line); padding: 16px; transition: border-color .2s, background .2s; }
+.frame.over .drop { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.drop h2 { margin: 0; font: 800 clamp(26px, 5vw, 44px)/1 var(--display); letter-spacing: -.03em; text-wrap: balance; }
+.drop p { margin: 0; color: var(--mute); font-size: 15px; }
+.frame.has .drop { display: none; }
+.laser { position: absolute; left: 0; right: 0; height: 3px; top: 0; z-index: 4; background: var(--accent); box-shadow: 0 0 24px 6px var(--accent), 0 -40px 60px -10px color-mix(in srgb, var(--accent) 45%, transparent); opacity: 0; pointer-events: none; }
+.frame.busy .laser { opacity: 1; animation: sweep 1.7s cubic-bezier(.5, 0, .5, 1) infinite alternate; }
+@keyframes sweep { from { top: 0; } to { top: calc(100% - 3px); } }
+.stagebar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 5; padding: 10px 14px; background: color-mix(in srgb, var(--ink) 82%, transparent); border-top: 1px solid var(--line); display: none; }
+.frame.busy .stagebar { display: block; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.tools .grow { flex: 1 1 auto; }
+.heatrow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 12px; padding: 12px 14px; border: 1px solid var(--line); background: var(--panel); border-radius: 2px; }
+.heatrow label { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.heatrow input[type="range"] { flex: 1 1 140px; min-width: 0; accent-color: var(--accent); }
+.heatrow.off { opacity: .45; pointer-events: none; }
+input[type="checkbox"] { accent-color: var(--accent); width: 16px; height: 16px; }
+
+/* readout */
+.read { border: 1px solid var(--line); background: var(--panel); border-radius: 2px; min-height: 360px; }
+.read-in { padding: 22px; display: grid; gap: 20px; }
+.empty h3 { margin: 0 0 6px; font: 800 clamp(30px, 5vw, 52px)/.95 var(--display); letter-spacing: -.04em; color: var(--mute); }
+.empty .rows { display: grid; gap: 0; margin-top: 18px; }
+.empty .rows div { display: flex; gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); color: var(--mute); font-size: 15px; }
+.empty .rows b { color: var(--text); font-weight: 600; min-width: 130px; }
+.verdict { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; }
+.verdict h3 { margin: 4px 0 8px; font: 800 clamp(32px, 5vw, 54px)/.95 var(--display); letter-spacing: -.04em; text-wrap: balance; overflow-wrap: anywhere; }
+.chip { display: inline-block; padding: 5px 10px; font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; border: 1px solid currentColor; border-radius: 99px; }
+.chip.ok { color: var(--ok); } .chip.bad { color: var(--bad); }
+.ring { position: relative; width: 124px; height: 124px; }
+.ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+.ring circle { fill: none; stroke-width: 9; }
+.ring .bg { stroke: var(--line); }
+.ring .fg { stroke: var(--vc, var(--accent)); stroke-linecap: butt; stroke-dasharray: 326.7; stroke-dashoffset: 326.7; transition: stroke-dashoffset 1.1s cubic-bezier(.2, .8, .2, 1); }
+.ring b { position: absolute; inset: 0; display: grid; place-content: center; font: 800 30px/1 var(--display); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.gate { display: grid; gap: 4px; padding: 12px 14px; border: 1px solid var(--line); border-left: 4px solid var(--gc); background: var(--panel-2); border-radius: 2px; }
+.gate strong { font: 700 15px/1.2 var(--body); color: var(--gc); }
+.gate span { color: var(--mute); font-size: 14px; }
+.gate.ok { --gc: var(--ok); } .gate.warn { --gc: var(--warn); }
+.bars { display: grid; gap: 9px; }
+.bar { display: grid; grid-template-columns: minmax(80px, 150px) minmax(0, 1fr) 52px; gap: 12px; align-items: center; font-size: 14px; }
+.bar .n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bar .t { height: 10px; background: var(--panel-2); position: relative; }
+.bar .t i { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--bc); opacity: .5; transition: width .9s cubic-bezier(.2, .8, .2, 1); }
+.bar.top .t i { opacity: 1; }
+.bar .v { text-align: right; font-family: var(--mono); font-size: 12px; font-variant-numeric: tabular-nums; color: var(--mute); }
+.notes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.notes div { padding: 14px; background: var(--panel-2); border-radius: 2px; min-width: 0; }
+.notes h4 { margin: 0 0 6px; }
+.notes p { margin: 0; font-size: 14px; color: var(--text); }
+.meta { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.fine { margin: 0; font-size: 13px; color: var(--mute); }
+.err { padding: 16px; border: 1px solid var(--bad); background: color-mix(in srgb, var(--bad) 8%, transparent); border-radius: 2px; display: grid; gap: 10px; }
+.err strong { color: var(--bad); }
+.err p { margin: 0; font-size: 14px; }
+
+/* log + guide */
+section.block { padding-block: 8px 48px; }
+.block-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 18px; }
+.block-head h2 { margin: 0; font: 800 clamp(26px, 4vw, 40px)/1 var(--display); letter-spacing: -.03em; }
+.logrow { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; }
+.log { flex: 0 0 168px; border: 1px solid var(--line); background: var(--panel); border-radius: 2px; overflow: hidden; }
+.log img { display: block; width: 100%; height: 96px; object-fit: cover; }
+.log div { padding: 10px; display: grid; gap: 2px; min-width: 0; }
+.log strong { font-size: 14px; line-height: 1.2; overflow-wrap: anywhere; }
+.log-empty { color: var(--mute); font-size: 15px; margin: 0; }
+.guide { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr)); gap: 10px; }
+.card { padding: 16px; border: 1px solid var(--line); background: var(--panel); border-radius: 2px; display: grid; gap: 8px; align-content: start; transition: border-color .3s, background .3s; min-width: 0; }
+.card h3 { margin: 0; font: 800 22px/1.05 var(--display); letter-spacing: -.02em; }
+.card p { margin: 0; font-size: 14px; color: var(--mute); }
+.card.hit { border-color: var(--accent); background: var(--panel-2); }
+.card .chip { justify-self: start; }
+
+/* connection panel */
+.scrim { position: fixed; inset: 0; background: rgba(4, 8, 6, .7); z-index: 40; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(440px, 100%); z-index: 41; background: var(--panel); border-left: 1px solid var(--line); transform: translateX(100%); transition: transform .25s cubic-bezier(.2, .8, .2, 1); padding: 22px max(22px, env(safe-area-inset-right, 0px)) 22px 22px; overflow-y: auto; display: grid; gap: 16px; align-content: start; }
+body.drawer-open .scrim { opacity: 1; pointer-events: auto; }
+body.drawer-open .drawer { transform: none; }
+.drawer h2 { margin: 0; font: 800 30px/1 var(--display); letter-spacing: -.03em; }
+.drawer label.f { display: grid; gap: 6px; font-size: 14px; }
+.drawer input[type="text"], .drawer input[type="number"], .drawer select { background: var(--ink); border: 1px solid var(--line); padding: 10px 12px; border-radius: 2px; width: 100%; font-family: var(--mono); font-size: 13px; }
+.drawer input[type="text"]:focus-visible, .drawer input[type="number"]:focus-visible, .drawer select:focus-visible { border-color: var(--accent); outline-offset: 0; }
+.drawer .check { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+.drawer input[type="range"] { width: 100%; accent-color: var(--accent); }
+.drawer .env-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 2px; }
+.drawer .env-group h3 { grid-column: span 2; margin: 0 0 4px; font-size: 13px; font-family: var(--mono); color: var(--accent); text-transform: uppercase; }
+
+/* XAI & Treatment Guidance Cards */
+.report-box { padding: 14px 16px; background: var(--panel-2); border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 2px; display: grid; gap: 6px; }
+.expl-box { padding: 12px 14px; background: color-mix(in srgb, var(--panel-2) 65%, transparent); border: 1px solid var(--line); border-radius: 2px; }
+.mgmt-card { display: grid; gap: 12px; padding: 16px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 2px; }
+.mgmt-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.mgmt-head h4 { margin: 0; color: var(--accent); }
+.mgmt-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; font-size: 13px; }
+.mgmt-cols div { display: grid; gap: 6px; align-content: start; }
+.mgmt-cols strong { font-size: 13px; }
+.mgmt-cols ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; color: var(--text); }
+.mgmt-cols li { line-height: 1.45; }
+.expert-note { margin: 0; font-size: 13px; color: var(--mute); padding: 8px 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 2px; }
+.expert-note b { color: var(--warn); }
+.sources-wrap { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 12px; padding-top: 4px; border-top: 1px dashed var(--line); }
+.source-tag { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 2px; text-decoration: none; color: var(--accent); font-size: 11px; }
+.source-tag:hover { border-color: var(--accent); text-decoration: underline; }
+.source-tag span { color: var(--mute); }
+.disclaimer-txt { margin: 8px 0 0; font-size: 11px; color: var(--mute); line-height: 1.5; border-top: 1px solid var(--line); padding-top: 10px; }
+
+/* Dedicated SHAP Attribution Section */
+.shap-card { padding: 16px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 2px; display: grid; gap: 12px; }
+.shap-head { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.shap-head h4 { margin: 0; color: var(--accent); }
+.shap-img { width: 100%; max-width: 580px; height: auto; border: 1px solid var(--line); border-radius: 2px; display: block; margin: 4px auto 8px; }
+.shap-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.shap-table th, .shap-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); }
+.shap-table th { font-family: var(--mono); font-size: 11px; color: var(--mute); text-transform: uppercase; }
+.shap-badge { display: inline-block; padding: 2px 7px; border-radius: 99px; font-family: var(--mono); font-size: 11px; }
+.shap-badge.up { background: rgba(98, 212, 139, 0.15); color: var(--ok); border: 1px solid var(--ok); }
+.shap-badge.down { background: rgba(255, 122, 89, 0.15); color: var(--bad); border: 1px solid var(--bad); }
+.shap-badge.neutral { background: var(--panel); color: var(--mute); border: 1px solid var(--line); }
+
+footer { padding-block: 24px 40px; border-top: 1px solid var(--line); color: var(--mute); font-size: 13px; }
+
+@media (max-width: 900px) {
+  .bench { grid-template-columns: minmax(0, 1fr); }
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 560px) {
+  .crops { grid-template-columns: minmax(0, 1fr); }
+  .notes { grid-template-columns: minmax(0, 1fr); }
+  .verdict { grid-template-columns: minmax(0, 1fr); }
+  .bar { grid-template-columns: minmax(70px, 110px) minmax(0, 1fr) 46px; gap: 8px; }
+  .empty .rows div { flex-direction: column; gap: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .frame.busy .laser { top: 50%; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="square" aria-hidden="true"><path d="M5 27C5 13 13 5 27 5c0 14-8 22-22 22Z"/><path d="M5 27 19 13M13 14l-1 5M18 10l-1 5"/></svg>
+      LeafScan
+    </div>
+    <div class="top-right">
+      <span class="pill live" id="status"><i></i><span id="statusText">Live · 127.0.0.1:8000</span></span>
+      <button class="btn" id="openSettings" type="button">Connection &amp; Environment</button>
+    </div>
+  </header>
+</div>
+
+<div class="hero" id="hero">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-grid">
+    <h1><span>Leaf</span><span class="outline">Scan</span></h1>
+    <p>Drop in a photo of a <b>banana, apple or mango</b> leaf. Get a verified diagnosis, disease confidence, and an interactive Grad-CAM attention map.</p>
+  </div>
+  <div class="crops" role="tablist" aria-label="Crop">
+    <button class="crop" role="tab" type="button" data-crop="banana" style="--c:#f4c430" aria-selected="true"><strong>Banana</strong><span class="mono">7 conditions</span></button>
+    <button class="crop" role="tab" type="button" data-crop="apple" style="--c:#ff5a5f" aria-selected="false"><strong>Apple</strong><span class="mono">4 conditions</span></button>
+    <button class="crop" role="tab" type="button" data-crop="mango" style="--c:#ff9a3c" aria-selected="false"><strong>Mango</strong><span class="mono">8 conditions</span></button>
+  </div>
+</div>
+
+<div class="wrap">
+  <main class="bench">
+    <div>
+      <div class="frame" id="frame">
+        <canvas id="view"></canvas>
+        <span class="mark tl"></span><span class="mark tr"></span><span class="mark bl"></span><span class="mark br"></span>
+        <div class="tag" id="tag">Specimen · none loaded</div>
+        <div class="drop" id="drop">
+          <h2>Drop a leaf photo here</h2>
+          <p>Or paste from clipboard, browse for a file, or take a picture.</p>
+        </div>
+        <div class="laser"></div>
+        <div class="stagebar mono" id="stage">Starting</div>
+      </div>
+      <div class="tools">
+        <button class="btn" id="browse" type="button">Browse photo</button>
+        <button class="btn" id="camera" type="button">Take picture</button>
+        <button class="btn ghost" id="sample" type="button">Try a sample leaf</button>
+        <span class="grow"></span>
+        <button class="btn ghost" id="clear" type="button" disabled>Clear</button>
+        <button class="btn primary" id="analyze" type="button" disabled>Analyze leaf</button>
+      </div>
+      <div class="heatrow off" id="heatrow">
+        <label><input type="checkbox" id="heatOn" checked> Attention map (Grad-CAM)</label>
+        <label class="mono" for="heatAlpha" style="flex:1 1 220px;display:flex;gap:10px;align-items:center">Opacity <input type="range" id="heatAlpha" min="0" max="100" value="65"></label>
+      </div>
+      <input type="file" id="file" accept="image/*" hidden>
+      <input type="file" id="cam" accept="image/*" capture="environment" hidden>
+    </div>
+
+    <div class="read" id="read" aria-live="polite">
+      <div class="read-in empty" id="readIn">
+        <div>
+          <h3>Waiting for a leaf</h3>
+          <span class="mono">Pick a crop, then add a photo</span>
+        </div>
+        <div class="rows">
+          <div><b>Verdict</b><span>The most likely condition, or healthy.</span></div>
+          <div><b>Confidence gate</b><span>Flags answers the model is unsure about.</span></div>
+          <div><b>Leaf Validator</b><span>Rejects flowers, wrong crops, and non-plants automatically.</span></div>
+          <div><b>Attention map</b><span>Visualizes the leaf patterns that guided the diagnosis.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <section class="block">
+    <div class="block-head"><h2>Specimen log</h2><button class="btn ghost" id="clearLog" type="button">Clear log</button></div>
+    <div class="logrow" id="logrow"></div>
+  </section>
+
+  <section class="block">
+    <div class="block-head"><h2 id="guideTitle">Field guide</h2><span class="mono" id="guideSub"></span></div>
+    <div class="guide" id="guide"></div>
+  </section>
+
+  <footer>Advisory output from multimodal deep learning models. Confirm diagnoses with local agronomists before treating crops.</footer>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" aria-label="Connection settings" aria-hidden="true">
+  <h2>Settings</h2>
+  <label class="check"><input type="checkbox" id="cDemo"> Demo mode (simulated offline results)</label>
+  <label class="f">API Base URL<input type="text" id="cBase" spellcheck="false" autocomplete="off"></label>
+  <label class="f">Endpoint Pattern<input type="text" id="cPath" spellcheck="false" autocomplete="off"></label>
+  <label class="f">Upload field name<input type="text" id="cField" spellcheck="false" autocomplete="off"></label>
+  <label class="f">Confidence gate: <span id="cGateV" class="mono"></span><input type="range" id="cGate" min="30" max="95" value="60"></label>
+  
+  <div class="env-group">
+    <h3>Environmental Variables</h3>
+    <label class="f">Temp (°C)<input type="number" id="eTemp" step="0.5" value="28"></label>
+    <label class="f">Humidity (%)<input type="number" id="eHum" min="0" max="100" value="75"></label>
+    <label class="f">Rainfall (mm)<input type="number" id="eRain" min="0" value="5"></label>
+    <label class="f">Soil Moist (%)<input type="number" id="eMoist" min="0" max="100" value="40"></label>
+    <label class="f">Soil pH<input type="number" id="ePh" step="0.1" min="3" max="10" value="6.5"></label>
+    <label class="f">Season
+      <select id="eSeason">
+        <option value="Post-Monsoon">Post-Monsoon</option>
+        <option value="Winter">Winter</option>
+        <option value="Monsoon">Monsoon</option>
+        <option value="Summer">Summer</option>
+        <option value="spring">Spring</option>
+        <option value="Autumn">Autumn</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="tools"><button class="btn primary" id="cSave" type="button">Save Settings</button><button class="btn ghost" id="cClose" type="button">Close</button></div>
+</aside>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s) { return document.querySelector(s); };
+  var clamp = function (v, a, b) { return Math.max(a, Math.min(b, v)); };
+  var pct = function (v) { return Math.round(v * 100) + "%"; };
+  var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var store = {
+    get: function (k, d) { try { var v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+    set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  };
+
+  /* ---------- crop and class data ---------- */
+  var HEALTHY_SYM = "Even green leaf blade with consistent venation and no necrotic lesions, streaks, or fungal coatings.";
+  var HEALTHY_ACT = "No intervention needed. Continue regular scouting and balanced nutrition.";
+  
+  var CROPS = {
+    banana: {
+      name: "Banana",
+      accent: "#f4c430",
+      classes: [
+        { id: "banana_black_sigatoka_disease", label: "Black Sigatoka", sym: "Dark reddish-brown to black streaks running parallel to leaf veins, merging into wide necrotic blights.", act: "Deleaf severely infected leaves, lower canopy humidity, and follow recommended fungicide rotation." },
+        { id: "banana_yellow_sigatoka_disease", label: "Yellow Sigatoka", sym: "Small pale yellow spots expanding into elliptical spots with light grey centers and dark amber borders.", act: "Remove affected foliage promptly and apply protectant sprays before wet weather." },
+        { id: "banana_bract_mosaic_virus_disease", label: "Bract Mosaic Virus", sym: "Spindle-shaped reddish-brown or chlorotic streaks on leaves and flower bracts.", act: "Eradicate and dispose of infected plants; control aphid vectors using registered treatments." },
+        { id: "banana_insect_pest_disease", label: "Insect Pest Damage", sym: "Notched leaf margins, tunneling, or localized punctures from weevils and leaf chewers.", act: "Deploy pheromone traps, maintain field sanitation, and apply biological insecticides." },
+        { id: "banana_moko_disease", label: "Moko Disease (Bacterial Wilt)", sym: "Rapid yellowing and wilting of inner leaves with vascular discoloration and collapsed petioles.", act: "Quarantine area immediately, disinfect cutting tools with bleach solution, and safely destroy diseased mats." },
+        { id: "banana_panama_disease", label: "Panama Disease (Fusarium)", sym: "Pronounced yellowing of outer leaf margins progressing inward, followed by petiole buckling.", act: "Soil-borne pathogen with no cure; isolate affected mats and plant resistant tissue-culture varieties." },
+        { id: "banana_healthy_leaf", label: "Healthy Banana Leaf", healthy: true, sym: HEALTHY_SYM, act: HEALTHY_ACT }
+      ]
+    },
+    apple: {
+      name: "Apple",
+      accent: "#ff5a5f",
+      classes: [
+        { id: "scab", label: "Apple Scab", sym: "Olive-green to velvety dark brown circular lesions on upper leaf surfaces, causing puckering and leaf curl.", act: "Rake and destroy fallen leaves, prune to improve airflow, and spray protective fungicides." },
+        { id: "rust", label: "Cedar Apple Rust", sym: "Bright yellow-orange or reddish spots on upper leaf surface, with small tube-like fruiting bodies beneath.", act: "Remove nearby juniper/red cedar hosts where possible; apply systemic fungicides during bud break." },
+        { id: "multiple_diseases", label: "Multiple Diseases", sym: "Simultaneous co-infection exhibiting scab lesions, rust pustules, and leaf margin necrosis.", act: "Carry out broad-spectrum sanitation and consult local agricultural extension specialists." },
+        { id: "healthy", label: "Healthy Apple Leaf", healthy: true, sym: HEALTHY_SYM, act: HEALTHY_ACT }
+      ]
+    },
+    mango: {
+      name: "Mango",
+      accent: "#ff9a3c",
+      classes: [
+        { id: "anthracnose", label: "Anthracnose", sym: "Dark brown to black angular lesions that coalesce; dead tissue often drops out leaving shot-hole perforations.", act: "Prune dead twigs, sweep fallen litter, and apply copper fungicide during leaf flush and blossoming." },
+        { id: "bacterial_canker", label: "Bacterial Canker", sym: "Angular, water-soaked black raised lesions on leaves and stems, frequently surrounded by prominent yellow halos.", act: "Prune infected branches with sterilized shears, avoid tree injuries, and apply copper bactericides." },
+        { id: "cutting_weevil", label: "Cutting Weevil Damage", sym: "Scissor-like clean cuts across the leaf blade where adult female weevils severed tender leaves for oviposition.", act: "Collect and burn severed leaves, monitor new flush, and treat tree basin with registered bio-insecticides." },
+        { id: "die_back", label: "Die Back", sym: "Leaf browning and desiccation starting from the shoot tips and advancing backward toward the branch.", act: "Prune shoots 6-8 cm below discoloration, apply Bordeaux paste to cut wounds, and clear orchard debris." },
+        { id: "gall_midge", label: "Gall Midge Damage", sym: "Small raised wart-like galls on tender foliage, causing leaf distortion, curling, and premature leaf drop.", act: "Prune infested new flushes, rake and till soil under canopy to expose pupating larvae to predators." },
+        { id: "powdery_mildew", label: "Powdery Mildew", sym: "White powdery fungal coating on leaves and inflorescence, leading to leaf curl, browning, and flower drop.", act: "Improve canopy sunlight penetration and apply wettable sulfur or systemic fungicides at first onset." },
+        { id: "sooty_mould", label: "Sooty Mould", sym: "Superficial dark velvety black film covering the upper leaf blade, blocking photosynthesis.", act: "Control sap-feeding hoppers and scales producing honeydew; wash foliage with mild soap solution." },
+        { id: "healthy", label: "Healthy Mango Leaf", healthy: true, sym: HEALTHY_SYM, act: HEALTHY_ACT }
+      ]
+    }
+  };
+
+  /* ---------- environmental presets per crop ---------- */
+  var DEFAULT_ENVS = {
+    banana: { temperature_c: 29, humidity_pct: 80, rainfall_mm: 10, soil_moisture_pct: 50, soil_ph: 6.5, season: "Monsoon" },
+    apple: { temperature_c: 22, humidity_pct: 65, rainfall_mm: 2, soil_moisture_pct: 35, soil_ph: 6.5, season: "spring" },
+    mango: { temperature_c: 28, humidity_pct: 75, rainfall_mm: 5, soil_moisture_pct: 40, soil_ph: 6.5, season: "Post-Monsoon" }
+  };
+
+  /* ---------- state ---------- */
+  var isLocal = window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost";
+  var defaultBase = isLocal ? "http://127.0.0.1:8000" : window.location.origin;
+
+  var savedCfg = store.get("leafscan.cfg", {});
+  // If accessing through an external tunnel like ngrok, ensure base URL points to the current tunnel host
+  if (!isLocal && savedCfg && savedCfg.base && (savedCfg.base.includes("127.0.0.1") || savedCfg.base.includes("localhost"))) {
+    savedCfg.base = window.location.origin;
+  }
+
+  var cfg = Object.assign({
+    demo: false, // Default to Live FastAPI backend!
+    base: defaultBase,
+    path: "/predict/{crop}",
+    field: "image",
+    gate: 0.50,
+    env: DEFAULT_ENVS.banana
+  }, savedCfg);
+
+  var state = { crop: "banana", src: null, blob: null, name: "", isSample: false, spec: "", result: null, busy: false };
+  var history = store.get("leafscan.log", []);
+  var accentCol = CROPS.banana.accent;
+
+  /* ---------- crop switching ---------- */
+  function setCrop(key) {
+    state.crop = key;
+    accentCol = CROPS[key].accent;
+    document.documentElement.style.setProperty("--accent", accentCol);
+    document.querySelectorAll(".crop").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.crop === key)); });
+    
+    // Update default env values for this crop
+    var preset = DEFAULT_ENVS[key] || DEFAULT_ENVS.banana;
+    $("#eTemp").value = preset.temperature_c;
+    $("#eHum").value = preset.humidity_pct;
+    $("#eRain").value = preset.rainfall_mm;
+    $("#eMoist").value = preset.soil_moisture_pct;
+    $("#ePh").value = preset.soil_ph;
+    $("#eSeason").value = preset.season;
+    
+    state.result = null;
+    renderEmpty();
+    renderGuide();
+    syncHeatRow();
+    drawView();
+  }
+
+  document.querySelectorAll(".crop").forEach(function (b) {
+    b.addEventListener("click", function () { if (!state.busy) setCrop(b.dataset.crop); });
+  });
+
+  /* ---------- spore field (hero canvas animation) ---------- */
+  (function () {
+    var cv = $("#field"), hero = $("#hero"), x = cv.getContext("2d");
+    var W = 0, H = 0, ps = [], mouse = { x: -999, y: -999 }, running = false;
+    var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    function size() {
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = hero.clientWidth; H = hero.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.min(100, Math.round(W * H / 9500));
+      ps = [];
+      for (var i = 0; i < n; i++) ps.push({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, r: 2 + Math.random() * 4, a: Math.random() * 6.28, va: (Math.random() - .5) * .012 });
+      frame();
+    }
+    function frame() {
+      x.clearRect(0, 0, W, H);
+      x.fillStyle = accentCol; x.strokeStyle = accentCol;
+      for (var i = 0; i < ps.length; i++) {
+        var p = ps[i];
+        var dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy;
+        if (d2 < 14000) { var d = Math.sqrt(d2) || 1, f = (1 - d / 118) * .9; p.vx += dx / d * f; p.vy += dy / d * f; }
+        p.vx *= .96; p.vy *= .96;
+        p.x += p.vx + .05; p.y += p.vy; p.a += p.va;
+        if (p.x < -10) p.x = W + 10; if (p.x > W + 10) p.x = -10;
+        if (p.y < -10) p.y = H + 10; if (p.y > H + 10) p.y = -10;
+      }
+      x.lineWidth = 1;
+      for (var a = 0; a < ps.length; a++) {
+        for (var b = a + 1; b < ps.length; b++) {
+          var ddx = ps[a].x - ps[b].x, ddy = ps[a].y - ps[b].y, dd = ddx * ddx + ddy * ddy;
+          if (dd < 11000) { x.globalAlpha = (1 - dd / 11000) * .25; x.beginPath(); x.moveTo(ps[a].x, ps[a].y); x.lineTo(ps[b].x, ps[b].y); x.stroke(); }
+        }
+      }
+      x.globalAlpha = .75;
+      for (var k = 0; k < ps.length; k++) {
+        var q = ps[k];
+        x.beginPath(); x.ellipse(q.x, q.y, q.r * 1.9, q.r * .8, q.a, 0, 6.2832); x.fill();
+      }
+      x.globalAlpha = 1;
+    }
+    function loop() { if (!running) return; frame(); requestAnimationFrame(loop); }
+    function start() { if (reduce || running) return; running = true; requestAnimationFrame(loop); }
+    hero.addEventListener("pointermove", function (e) { var r = hero.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
+    hero.addEventListener("pointerleave", function () { mouse.x = mouse.y = -999; });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) running = false; else start(); });
+    if (window.ResizeObserver) new ResizeObserver(size).observe(hero); else window.addEventListener("resize", size);
+    size(); start();
+  })();
+
+  /* ---------- image stage ---------- */
+  var view = $("#view"), frameEl = $("#frame"), vctx = view.getContext("2d");
+  function fitRect(sw, sh, dw, dh) {
+    var s = Math.min(dw / sw, dh / sh), w = sw * s, h = sh * s;
+    return { x: (dw - w) / 2, y: (dh - h) / 2, w: w, h: h };
+  }
+  function drawView() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = frameEl.clientWidth, h = frameEl.clientHeight;
+    if (!w || !h) return;
+    if (view.width !== Math.round(w * dpr) || view.height !== Math.round(h * dpr)) { view.width = Math.round(w * dpr); view.height = Math.round(h * dpr); }
+    vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    vctx.clearRect(0, 0, w, h);
+    if (!state.src) return;
+    var r = fitRect(state.src.width, state.src.height, w, h);
+    vctx.imageSmoothingEnabled = true;
+    vctx.drawImage(state.src, r.x, r.y, r.w, r.h);
+    var res = state.result;
+    if (res && res.heat && $("#heatOn").checked) {
+      vctx.globalAlpha = $("#heatAlpha").value / 100;
+      vctx.drawImage(res.heat, r.x, r.y, r.w, r.h);
+      vctx.globalAlpha = 1;
+    }
+  }
+  if (window.ResizeObserver) new ResizeObserver(drawView).observe(frameEl); else window.addEventListener("resize", drawView);
+  $("#heatOn").addEventListener("change", drawView);
+  $("#heatAlpha").addEventListener("input", drawView);
+  function syncHeatRow() {
+    var on = !!(state.result && state.result.heat);
+    $("#heatrow").classList.toggle("off", !on);
+  }
+
+  function newSpecimen() { return "LF-" + Math.random().toString(36).slice(2, 6).toUpperCase(); }
+  function setSource(src, blob, name, isSample) {
+    state.src = src; state.blob = blob; state.name = name; state.isSample = isSample;
+    state.spec = newSpecimen(); state.result = null;
+    frameEl.classList.add("has");
+    $("#tag").textContent = "Specimen " + state.spec + " · " + CROPS[state.crop].name + (isSample ? " · Sample Leaf" : "");
+    $("#analyze").disabled = false; $("#clear").disabled = false;
+    renderEmpty(); renderGuide(); syncHeatRow(); drawView();
+  }
+  function loadFile(file) {
+    if (!file || !/^image\//.test(file.type)) return;
+    var url = URL.createObjectURL(file), img = new Image();
+    img.onload = function () { setSource(img, file, file.name || "leaf.jpg", false); };
+    img.onerror = function () { URL.revokeObjectURL(url); showError("Unable to read image file.", "Please select a standard JPEG, PNG or WebP photo."); };
+    img.src = url;
+  }
+  function clearStage() {
+    state.src = null; state.blob = null; state.result = null; state.isSample = false;
+    frameEl.classList.remove("has");
+    $("#tag").textContent = "Specimen · none loaded";
+    $("#analyze").disabled = true; $("#clear").disabled = true;
+    renderEmpty(); renderGuide(); syncHeatRow(); drawView();
+  }
+  $("#browse").addEventListener("click", function () { $("#file").click(); });
+  $("#camera").addEventListener("click", function () { $("#cam").click(); });
+  $("#file").addEventListener("change", function (e) { loadFile(e.target.files[0]); e.target.value = ""; });
+  $("#cam").addEventListener("change", function (e) { loadFile(e.target.files[0]); e.target.value = ""; });
+  $("#clear").addEventListener("click", function () { if (!state.busy) clearStage(); });
+  frameEl.addEventListener("dragover", function (e) { e.preventDefault(); frameEl.classList.add("over"); });
+  frameEl.addEventListener("dragleave", function () { frameEl.classList.remove("over"); });
+  frameEl.addEventListener("drop", function (e) { e.preventDefault(); frameEl.classList.remove("over"); if (e.dataTransfer.files[0]) loadFile(e.dataTransfer.files[0]); });
+  frameEl.addEventListener("click", function (e) { if (!state.src && !e.target.closest("button")) $("#file").click(); });
+  document.addEventListener("paste", function (e) {
+    var items = (e.clipboardData && e.clipboardData.items) || [];
+    for (var i = 0; i < items.length; i++) if (items[i].type.indexOf("image") === 0) { loadFile(items[i].getAsFile()); break; }
+  });
+
+  /* ---------- Sample leaf loader ---------- */
+  $("#sample").addEventListener("click", function () {
+    if (state.busy) return;
+    var samplePath = "/sample_" + state.crop + ".jpg";
+    var img = new Image();
+    img.onload = function () {
+      fetch(samplePath).then(function (r) { return r.blob(); }).then(function (blob) {
+        setSource(img, blob, "sample_" + state.crop + ".jpg", true);
+      }).catch(function () {
+        // Fallback: draw directly to canvas and convert to blob
+        var c = document.createElement("canvas");
+        c.width = img.naturalWidth || 640; c.height = img.naturalHeight || 480;
+        c.getContext("2d").drawImage(img, 0, 0);
+        c.toBlob(function (b) { setSource(img, b, "sample_" + state.crop + ".jpg", true); }, "image/jpeg");
+      });
+    };
+    img.onerror = function () {
+      showError("Could not load sample image", "Make sure the dev server is running.");
+    };
+    img.src = samplePath;
+  });
+
+  /* ---------- Live predictor ---------- */
+  function matchClass(crop, label) {
+    var norm = function (s) { return String(s).toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_|_$/g, ""); };
+    var n = norm(label), cls = CROPS[crop].classes, i;
+    for (i = 0; i < cls.length; i++) if (cls[i].id === n || norm(cls[i].label) === n) return cls[i];
+    for (i = 0; i < cls.length; i++) if (n.indexOf(cls[i].id) !== -1 || cls[i].id.indexOf(n) !== -1) return cls[i];
+    return { id: n, label: String(label), healthy: /healthy/.test(n), aff: {}, sym: "Field notes not available for this label.", act: "Check agricultural extension guidance." };
+  }
+
+  function loadHeat(v) {
+    return new Promise(function (resolve) {
+      if (!v || typeof v !== "string") return resolve(null);
+      var src = /^(data:|https?:)/.test(v) ? v : "data:image/jpeg;base64," + v, img = new Image();
+      img.onload = function () { resolve(img); }; img.onerror = function () { resolve(null); };
+      img.src = src;
+    });
+  }
+
+  function normalize(crop, data, ms) {
+    var c = CROPS[crop];
+    var label = data.predicted_disease || data.prediction || data.label || data.class || data.disease || (data.top && data.top.label);
+    var conf = data.confidence != null ? data.confidence : data.score != null ? data.score : data.probability != null ? data.probability : (data.confidence_percent ? data.confidence_percent / 100 : null);
+    var probs = data.probabilities || data.probs || data.scores || data.class_probabilities, list = [];
+    
+    if (Array.isArray(probs)) {
+      list = probs.map(function (p, i) { return typeof p === "object" ? { label: p.label || p.class || (c.classes[i] && c.classes[i].id), p: +(p.probability != null ? p.probability : p.score != null ? p.score : p.p) } : { label: c.classes[i] ? c.classes[i].id : "class " + i, p: +p }; });
+    } else if (probs && typeof probs === "object") {
+      list = Object.keys(probs).map(function (k) { return { label: k, p: +probs[k] }; });
+    }
+    
+    if (!label && list.length) label = list.slice().sort(function (a, b) { return b.p - a.p; })[0].label;
+    if (!label) throw new Error("Backend response did not contain a recognizable prediction label.");
+    if (!list.length) list = [{ label: label, p: conf != null ? +conf : 1 }];
+    
+    var scale = list.some(function (x) { return x.p > 1; }) ? 100 : 1;
+    list.forEach(function (x) { x.p = clamp(x.p / scale, 0, 1); });
+    
+    var topEntry = list.filter(function (x) { return String(x.label) === String(label); })[0];
+    if (conf == null) conf = topEntry ? topEntry.p : 1; else if (conf > 1) conf /= 100;
+    
+    var rows = list.map(function (x) { return { cls: matchClass(crop, x.label), p: x.p }; }).sort(function (a, b) { return b.p - a.p; });
+    var topCls = matchClass(crop, label);
+    if (!rows.length || rows[0].cls.id !== topCls.id) rows.unshift({ cls: topCls, p: +conf });
+
+    var heatSource = data.gradcam_image || data.gradcam || data.grad_cam || data.heatmap || data.cam || data.gradcam_base64;
+    return loadHeat(heatSource).then(function (heat) {
+      return {
+        list: rows,
+        conf: +conf,
+        heat: heat,
+        ms: data.inference_ms || data.time_ms || ms,
+        demo: false,
+        management: data.management,
+        report: data.report,
+        explanation: data.explanation,
+        shap: data.shap || (data.explanation && data.explanation.shap),
+        disclaimer: data.disclaimer
+      };
+    });
+  }
+
+  function livePredict() {
+    var url = cfg.base.replace(/\/+$/, "") + cfg.path.replace("{crop}", state.crop);
+    var t0 = performance.now();
+    var fd = new FormData();
+    fd.append(cfg.field || "image", state.blob, state.name || "leaf.jpg");
+    
+    // Append environment parameters expected by FastAPI
+    var temp = $("#eTemp") ? $("#eTemp").value : "28";
+    var hum = $("#eHum") ? $("#eHum").value : "75";
+    var rain = $("#eRain") ? $("#eRain").value : "5";
+    var moist = $("#eMoist") ? $("#eMoist").value : "40";
+    var ph = $("#ePh") ? $("#ePh").value : "6.5";
+    var season = $("#eSeason") ? $("#eSeason").value : (state.crop === "mango" ? "Post-Monsoon" : (state.crop === "apple" ? "spring" : "Monsoon"));
+
+    fd.append("temperature_c", temp);
+    fd.append("humidity_pct", hum);
+    fd.append("rainfall_mm", rain);
+    fd.append("soil_moisture_pct", moist);
+    fd.append("soil_ph", ph);
+    fd.append("season", season);
+
+    var ctl = new AbortController(), to = setTimeout(function () { ctl.abort(); }, 60000);
+    return fetch(url, { method: "POST", body: fd, signal: ctl.signal }).then(async function (r) {
+      clearTimeout(to);
+      if (!r.ok) {
+        var errData = await r.json().catch(function() { return {}; });
+        var msg = "";
+        if (errData && errData.detail) {
+          msg = typeof errData.detail === "object" ? (errData.detail.message || JSON.stringify(errData.detail)) : errData.detail;
+        } else {
+          msg = "The server answered " + r.status + " " + r.statusText + " for " + url;
+        }
+        throw new Error(msg);
+      }
+      return r.json();
+    }).then(function (data) {
+      return normalize(state.crop, data, Math.round(performance.now() - t0));
+    }, function (e) {
+      clearTimeout(to);
+      if (e && e.name === "AbortError") throw new Error("The request timed out after 60 seconds.");
+      if (e instanceof TypeError) throw new Error("Cannot reach FastAPI at " + url + ". Check that the backend is running on port 8000.");
+      throw e;
+    });
+  }
+
+  /* ---------- analyse flow ---------- */
+  var STAGES = ["Validating leaf specimen", "Screening for flowers & non-plant objects", "Running fruit multimodal network", "Generating Grad-CAM attention heatmap"];
+  function setBusy(on) {
+    state.busy = on;
+    frameEl.classList.toggle("busy", on);
+    ["analyze", "browse", "camera", "sample", "clear"].forEach(function (id) { $("#" + id).disabled = on || ((id === "analyze" || id === "clear") && !state.src); });
+  }
+
+  function analyze() {
+    if (!state.src || state.busy) return;
+    setBusy(true);
+    var i = 0, el = $("#stage"); el.textContent = STAGES[0];
+    var timer = setInterval(function () { i = (i + 1) % STAGES.length; el.textContent = STAGES[i]; }, 600);
+    var started = performance.now();
+    
+    livePredict().then(function (res) {
+      if (!res.ms) res.ms = Math.round(performance.now() - started);
+      state.result = res;
+      showResult(res); remember(res); syncHeatRow(); renderGuide(); drawView();
+    }).catch(function (e) {
+      state.result = null;
+      syncHeatRow(); drawView();
+      showError(e.message || String(e), "Image validation or request notice.", false);
+    }).finally(function () { clearInterval(timer); setBusy(false); });
+  }
+  $("#analyze").addEventListener("click", analyze);
+
+  /* ---------- readout ---------- */
+  var readIn = $("#readIn");
+  function renderEmpty() {
+    readIn.className = "read-in empty";
+    readIn.innerHTML = '<div><h3>' + (state.src ? "Ready to analyze" : "Waiting for a leaf") + '</h3><span class="mono">' + esc(CROPS[state.crop].name) + (state.src ? " · click Analyze leaf" : " · add a photo to begin") + '</span></div>' +
+      '<div class="rows"><div><b>Verdict</b><span>Predicted disease condition, or healthy.</span></div><div><b>Leaf Validator</b><span>Rejects flowers, wrong crops, and non-plants automatically.</span></div><div><b>Confidence gate</b><span>Flags answers the model is unsure about.</span></div><div><b>Attention map</b><span>Visualizes feature attention maps over the leaf.</span></div></div>';
+  }
+
+  function showError(title, hint, offerFix) {
+    readIn.className = "read-in";
+    readIn.innerHTML = '<div class="err"><strong>' + esc(title) + '</strong>' + (hint ? '<p>' + esc(hint) + '</p>' : '') +
+      '<div class="tools"><button class="btn" id="eSet" type="button">Open Settings</button></div></div>';
+    $("#eSet").addEventListener("click", openDrawer);
+  }
+
+  function showResult(res) {
+    var top = res.list[0], second = res.list[1], healthy = !!top.cls.healthy;
+    var accepted = res.conf >= cfg.gate, close = second && (top.p - second.p) < .15, gateCls, gateT, gateX;
+    
+    if (!accepted) { gateCls = "warn"; gateT = "Uncertain Confidence"; gateX = "Confidence " + pct(res.conf) + " is under the " + pct(cfg.gate) + " gate threshold. Retake in clear light."; }
+    else if (close) { gateCls = "warn"; gateT = "Close Margin"; gateX = second.cls.label + " is within " + Math.round((top.p - second.p) * 100) + " points. Compare symptoms in field guide."; }
+    else { gateCls = "ok"; gateT = "Diagnosis Accepted"; gateX = "Above the " + pct(cfg.gate) + " confidence verification gate."; }
+    
+    var vc = healthy ? "var(--ok)" : "var(--bad)";
+    var bars = res.list.map(function (r, i) {
+      return '<div class="bar' + (i === 0 ? " top" : "") + '" style="--bc:' + (r.cls.healthy ? "var(--ok)" : "var(--accent)") + '"><span class="n" title="' + esc(r.cls.label) + '">' + esc(r.cls.label) + '</span><span class="t"><i data-w="' + (r.p * 100).toFixed(1) + '"></i></span><span class="v">' + (r.p * 100).toFixed(1) + '%</span></div>';
+    }).join("");
+
+    var mgmt = res.management || {};
+    var report = res.report || {};
+    var expl = res.explanation || {};
+
+    var reportHtml = "";
+    if (report && report.text) {
+      var sourceLabel = report.generated_by === "groq" ? "Groq Language Model" : "Verified Clinical Synthesis";
+      reportHtml = 
+        '<div class="report-box">' +
+          '<div style="display:flex;justify-content:space-between;align-items:center">' +
+            '<h4 class="mono" style="margin:0;color:var(--accent)">Diagnostic Synthesis</h4>' +
+            '<span class="mono" style="font-size:11px;opacity:.7">' + esc(sourceLabel) + '</span>' +
+          '</div>' +
+          '<p style="margin:0;font-size:14px;line-height:1.55">' + esc(report.text) + '</p>' +
+        '</div>';
+    }
+
+    var explHtml = "";
+    if (expl && expl.summary) {
+      explHtml = 
+        '<div class="expl-box">' +
+          '<span class="mono" style="color:var(--mute)">XAI Method: ' + esc(expl.method || "Grad-CAM") + '</span>' +
+          '<p style="margin:4px 0 0;font-size:13px;color:var(--text);line-height:1.5">' + esc(expl.summary) + '</p>' +
+        '</div>';
+    }
+
+    var shap = (expl && expl.shap) || res.shap;
+    var shapHtml = "";
+    if (shap && (shap.plot_base64 || shap.feature_contributions)) {
+      var rowsHtml = (shap.feature_contributions || []).map(function (c) {
+        var badgeCls = c.shap_value > 1e-5 ? "up" : (c.shap_value < -1e-5 ? "down" : "neutral");
+        var sign = c.shap_value > 0 ? "+" : "";
+        return '<tr>' +
+          '<td><strong>' + esc(c.feature) + '</strong></td>' +
+          '<td class="mono">' + esc(c.value) + '</td>' +
+          '<td><span class="shap-badge ' + badgeCls + '">' + sign + (c.shap_value).toFixed(6) + '</span></td>' +
+          '<td style="font-size:12px;color:var(--mute)">' + esc(c.direction) + '</td>' +
+        '</tr>';
+      }).join("");
+
+      shapHtml = 
+        '<div class="shap-card">' +
+          '<div class="shap-head">' +
+            '<h4 class="mono">Environmental Feature Attribution · KernelSHAP</h4>' +
+            '<span class="mono" style="font-size:11px;opacity:.7">Multi-Feature Influence</span>' +
+          '</div>' +
+          (shap.summary ? '<p style="margin:0;font-size:13px;line-height:1.5;color:var(--text)">' + esc(shap.summary) + '</p>' : '') +
+          (shap.plot_base64 ? '<img src="' + shap.plot_base64 + '" alt="SHAP Feature Attribution Bar Chart" class="shap-img" />' : '') +
+          '<table class="shap-table">' +
+            '<thead><tr><th>Feature</th><th>Observed Value</th><th>SHAP Attribution</th><th>Model Tendency</th></tr></thead>' +
+            '<tbody>' + rowsHtml + '</tbody>' +
+          '</table>' +
+          (shap.note ? '<span class="mono" style="font-size:11px;color:var(--mute)">' + esc(shap.note) + '</span>' : '') +
+        '</div>';
+    }
+
+    var mgmtHtml = "";
+    if (mgmt && (mgmt.immediate_actions || mgmt.treatment_options || mgmt.preventive_measures)) {
+      var immList = (mgmt.immediate_actions || []).map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("");
+      var treatList = (mgmt.treatment_options || []).map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("");
+      var prevList = (mgmt.preventive_measures || []).map(function (p) { return "<li>" + esc(p) + "</li>"; }).join("");
+      var sourcesHtml = (mgmt.sources || []).map(function (s) {
+        return '<a class="source-tag" href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.title) + ' <span>(' + esc(s.organization) + ')</span></a>';
+      }).join(" ");
+
+      mgmtHtml = 
+        '<div class="mgmt-card">' +
+          '<div class="mgmt-head">' +
+            '<h4 class="mono">' + esc(mgmt.display_name || "Treatment Protocol") + '</h4>' +
+            (mgmt.reviewed_by ? '<span class="mono" style="font-size:11px;opacity:.7">Reviewed: ' + esc(mgmt.reviewed_by) + '</span>' : '') +
+          '</div>' +
+          '<div class="mgmt-cols">' +
+            (immList ? '<div><strong style="color:var(--bad)">Immediate Containment</strong><ul>' + immList + '</ul></div>' : '') +
+            (treatList ? '<div><strong style="color:var(--accent)">Curative Treatment Options</strong><ul>' + treatList + '</ul></div>' : '') +
+            (prevList ? '<div><strong style="color:var(--ok)">Long-Term Preventive Measures</strong><ul>' + prevList + '</ul></div>' : '') +
+          '</div>' +
+          (mgmt.when_to_seek_expert_help ? '<p class="expert-note"><b>Expert Consultation:</b> ' + esc(mgmt.when_to_seek_expert_help) + '</p>' : '') +
+          (sourcesHtml ? '<div class="sources-wrap"><span class="mono" style="font-size:11px">Authoritative Guidance:</span> ' + sourcesHtml + '</div>' : '') +
+        '</div>';
+    }
+
+    var disclaimerHtml = res.disclaimer ? '<p class="disclaimer-txt">' + esc(res.disclaimer) + '</p>' : '';
+    
+    readIn.className = "read-in";
+    readIn.style.setProperty("--vc", vc);
+    readIn.innerHTML =
+      '<div class="verdict"><div><span class="mono">Specimen ' + esc(state.spec) + ' · ' + esc(CROPS[state.crop].name) + '</span><h3>' + esc(top.cls.label) + '</h3><span class="chip ' + (healthy ? "ok" : "bad") + '">' + (healthy ? "Healthy Tissue" : "Pathology Identified") + '</span></div>' +
+      '<div class="ring"><svg viewBox="0 0 120 120" aria-hidden="true"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" cx="60" cy="60" r="52" id="ringFg"/></svg><b>' + pct(res.conf) + '</b></div></div>' +
+      '<div class="gate ' + gateCls + '"><strong>' + gateT + '</strong><span>' + esc(gateX) + '</span></div>' +
+      reportHtml +
+      '<div class="bars" aria-label="Class probabilities">' + bars + '</div>' +
+      explHtml +
+      shapHtml +
+      mgmtHtml +
+      '<div class="meta"><span class="mono">' + res.ms + ' ms</span><span class="mono">Live Multimodal Model</span><span class="mono">' + (res.heat ? "Grad-CAM Heatmap Active" : "No Grad-CAM") + '</span></div>' +
+      disclaimerHtml;
+      
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        var fg = $("#ringFg"); if (fg) fg.style.strokeDashoffset = String(326.7 * (1 - res.conf));
+        readIn.querySelectorAll(".bar i").forEach(function (b) { b.style.width = b.dataset.w + "%"; });
+      });
+    });
+    if (window.matchMedia && !matchMedia("(min-width: 901px)").matches) $("#read").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  /* ---------- specimen log ---------- */
+  function thumb() {
+    var c = document.createElement("canvas"); c.width = 168; c.height = 96;
+    var x = c.getContext("2d"); x.fillStyle = "#0f1a16"; x.fillRect(0, 0, 168, 96);
+    var r = fitRect(state.src.width, state.src.height, 168, 96); x.drawImage(state.src, r.x, r.y, r.w, r.h);
+    try { return c.toDataURL("image/jpeg", .7); } catch (e) { return ""; }
+  }
+  function remember(res) {
+    var top = res.list[0];
+    history.unshift({ id: state.spec, crop: state.crop, label: top.cls.label, conf: res.conf, demo: res.demo, t: Date.now(), img: thumb() });
+    history = history.slice(0, 12); store.set("leafscan.log", history); renderLog();
+  }
+  function renderLog() {
+    var row = $("#logrow");
+    if (!history.length) { row.innerHTML = '<p class="log-empty">No specimens analyzed yet. Completed scans will appear here.</p>'; return; }
+    row.innerHTML = history.map(function (h) {
+      var when = new Date(h.t).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      return '<div class="log">' + (h.img ? '<img alt="" src="' + h.img + '">' : '') + '<div><span class="mono">' + esc(h.id) + ' · ' + esc(when) + '</span><strong>' + esc(h.label) + '</strong><span class="mono">' + esc((CROPS[h.crop] || { name: h.crop }).name) + ' · ' + pct(h.conf) + '</span></div></div>';
+    }).join("");
+  }
+  $("#clearLog").addEventListener("click", function () { history = []; store.set("leafscan.log", history); renderLog(); });
+
+  /* ---------- field guide ---------- */
+  function renderGuide() {
+    var c = CROPS[state.crop], hit = state.result && state.result.list[0].cls.id;
+    $("#guideTitle").textContent = c.name + " Field Guide";
+    $("#guideSub").textContent = c.classes.length + " model classes registered";
+    $("#guide").innerHTML = c.classes.map(function (cl) {
+      return '<article class="card' + (cl.id === hit ? " hit" : "") + '"><span class="chip ' + (cl.healthy ? "ok" : "bad") + '">' + (cl.healthy ? "Healthy" : "Condition") + '</span><h3>' + esc(cl.label) + '</h3><p>' + esc(cl.sym) + '</p></article>';
+    }).join("");
+  }
+
+  /* ---------- connection & settings drawer ---------- */
+  function syncStatus() {
+    fetch((cfg.base || "http://127.0.0.1:8000") + "/health").then(function(r) { return r.json(); }).then(function() {
+      var p = $("#status"); p.className = "pill live";
+      $("#statusText").textContent = "Live · " + cfg.base.replace(/^https?:\/\//, "");
+    }).catch(function() {
+      var p = $("#status"); p.className = "pill";
+      $("#statusText").textContent = "Backend Offline";
+    });
+  }
+
+  function openDrawer() {
+    $("#cDemo").checked = cfg.demo; $("#cBase").value = cfg.base; $("#cPath").value = cfg.path; $("#cField").value = cfg.field;
+    $("#cGate").value = Math.round(cfg.gate * 100); $("#cGateV").textContent = Math.round(cfg.gate * 100) + "%";
+    document.body.classList.add("drawer-open"); $("#drawer").setAttribute("aria-hidden", "false");
+    setTimeout(function () { $("#cBase").focus(); }, 250);
+  }
+  function closeDrawer() { document.body.classList.remove("drawer-open"); $("#drawer").setAttribute("aria-hidden", "true"); }
+  $("#openSettings").addEventListener("click", openDrawer);
+  $("#cClose").addEventListener("click", closeDrawer);
+  $("#scrim").addEventListener("click", closeDrawer);
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeDrawer(); });
+  $("#cGate").addEventListener("input", function (e) { $("#cGateV").textContent = e.target.value + "%"; });
+  $("#cSave").addEventListener("click", function () {
+    cfg.demo = $("#cDemo").checked;
+    cfg.base = $("#cBase").value.trim() || "http://127.0.0.1:8000";
+    cfg.path = $("#cPath").value.trim() || "/predict/{crop}"; if (cfg.path.charAt(0) !== "/") cfg.path = "/" + cfg.path;
+    cfg.field = $("#cField").value.trim() || "image";
+    cfg.gate = $("#cGate").value / 100;
+    store.set("leafscan.cfg", cfg);
+    syncStatus();
+    closeDrawer();
+    if (state.result) showResult(state.result);
+  });
+
+  /* ---------- boot ---------- */
+  syncStatus(); renderEmpty(); renderGuide(); renderLog(); drawView();
+})();
+</script>
+</body>
+</html>

@@ -1,1 +1,38 @@
+# Environment & secrets
+.env
+*.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+
+# Node & Frontend
+node_modules/
+dist/
+.npm
+npm-debug.log*
+
+# OS & Editor
 .DS_Store
+.Rhistory
+.vscode/
+.idea/
+
+# Large Datasets & Archives
+*.zip
+*.tar.gz
+apple_diseases/data/
+banana_diseases/data/
+backend/data/
+
+# Model Checkpoints (Ignore massive weights, keep lightweight validator)
+*.pt
+*.pth
+!backend/app/models/leaf_validator.pth
